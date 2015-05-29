@@ -24,6 +24,6 @@ def load_assets(base_path):
             if fn.startswith('.'):
                 continue
             path = os.path.join(dirname, fn)
-            path = os.path.relpath(path, base_path)
+            path = os.path.abspath(path)
             manifest[path] = Asset(path)
     return manifest

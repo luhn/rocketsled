@@ -38,7 +38,7 @@ def test_process_assset():
     asset = Asset('tests/static/hello.txt')
     asset.process(dict())
     assert asset.content == b'Hello world!\n'
-    assert asset.processed == True
+    assert asset.processed is True
 
 
 def test_process_compressed_asset():
@@ -52,7 +52,7 @@ def test_process_compressed_asset():
     with GzipFile(fileobj=BytesIO(asset.content)) as gz:
         assert gz.read() == b'Hello world!\n'
     assert asset.headers['Content-Encoding'] == 'gzip'
-    assert asset.processed == True
+    assert asset.processed is True
 
 
 def test_asset_filename():

@@ -1,4 +1,8 @@
+from io import BytesIO
+from gzip import GzipFile
 import mimetypes
+import hashlib
+from base64 import urlsafe_b64encode as b64encode
 
 
 class Asset(object):
@@ -7,7 +11,7 @@ class Asset(object):
 
     """
     processed = False
-    _contents = None
+    _content = None
 
     def __init__(self, path):
         self.path = path
@@ -21,19 +25,24 @@ class Asset(object):
         Do any processing necessary to prepare the file for upload.
 
         """
-        return
+        self.processed = True
 
     @property
     def content(self):
-        pass
+        if self._content is not None:
+            return self._content
+        with open(self.path, 'rb') as fh:
+            self._content = fh.read()
+        return self._content
 
     @content.setter
-    def content(self, name):
-        pass
+    def content(self, value):
+        self._content = value
 
     @property
-    def hash(self):
-        pass
+    def filename(self):
+        hash = hashlib.sha1(self.content).digest()
+        return b64encode(hash).decode('ascii').rstrip('=')
 
 
 class CompressedAsset(Asset):
@@ -49,8 +58,13 @@ class CompressedAsset(Asset):
     def process(self, manifest):
         if self.processed:
             return
-        super(CompressedAsset, self).process()
-        # TODO:  gzip content
+        super(CompressedAsset, self).process(manifest)
+
+        io = BytesIO()
+        with GzipFile(fileobj=io, mode='wb') as gz:
+            gz.write(self.content)
+        self.content = io.getvalue()
+        self.headers['Content-Encoding'] = 'gzip'
 
 
 class StylesheetAsset(CompressedAsset):
@@ -58,7 +72,7 @@ class StylesheetAsset(CompressedAsset):
         if self.processed:
             return
         # TODO:  Process URLs in stylesheet
-        super(StylesheetAsset, self).process()
+        super(StylesheetAsset, self).process(manifest)
 
 
 def create_asset_from_path(path):

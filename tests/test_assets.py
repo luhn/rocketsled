@@ -28,3 +28,33 @@ def test_create_asset_from_path():
         create_asset_from_path('css/main.css'),
         StylesheetAsset
     )
+
+
+def test_process_assset():
+    """
+    Does absolutely nothing.
+
+    """
+    asset = Asset('tests/static/hello.txt')
+    asset.process(dict())
+    assert asset.content == b'Hello world!\n'
+    assert asset.processed == True
+
+
+def test_process_compressed_asset():
+    """
+
+    """
+    from io import BytesIO
+    from gzip import GzipFile
+    asset = CompressedAsset('tests/static/hello.txt')
+    asset.process(dict())
+    with GzipFile(fileobj=BytesIO(asset.content)) as gz:
+        assert gz.read() == b'Hello world!\n'
+    assert asset.headers['Content-Encoding'] == 'gzip'
+    assert asset.processed == True
+
+
+def test_asset_filename():
+    asset = Asset('tests/static/hello.txt')
+    assert asset.filename == 'R6AT5mDUCGGdiUsggGsdUIaqsDs'

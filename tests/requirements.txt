@@ -1,0 +1,7 @@
+pep8==1.5.7
+pyflakes==0.8.1
+mccabe==0.3
+flake8==2.4.1
+
+py==1.4.28
+pytest==2.7.1

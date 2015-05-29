@@ -18,12 +18,12 @@ def load_assets(base_path):
     :rtype:  dict
 
     """
-    mapping = dict()
+    manifest = dict()
     for dirname, subdirs, files in os.walk(base_path):
         for fn in files:
             if fn.startswith('.'):
                 continue
             path = os.path.join(dirname, fn)
             path = os.path.relpath(path, base_path)
-            mapping[path] = Asset(path)
-    return mapping
+            manifest[path] = Asset(path)
+    return manifest

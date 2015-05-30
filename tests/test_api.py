@@ -1,6 +1,7 @@
 import os.path
 
 from rocketsled import load_assets
+from rocketsled.asset import Asset, CompressedAsset, StylesheetAsset
 
 
 def test_load_assets():
@@ -14,5 +15,17 @@ def test_load_assets():
             'images/subdir/blank.png',
         ]
     }
+    assert isinstance(
+        assets[os.path.abspath('tests/static/css/main.css')],
+        StylesheetAsset
+    )
+    assert isinstance(
+        assets[os.path.abspath('tests/static/hello.txt')],
+        CompressedAsset
+    )
+    assert isinstance(
+        assets[os.path.abspath('tests/static/images/blank.gif')],
+        Asset
+    )
     for key, value in assets.items():
         assert value.path == key

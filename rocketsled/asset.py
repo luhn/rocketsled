@@ -1,8 +1,15 @@
+import re
+import os.path
+import urllib as urlparse
 from io import BytesIO
 from gzip import GzipFile
 import mimetypes
 import hashlib
 from base64 import urlsafe_b64encode as b64encode
+
+
+class MissingAsset(Exception):
+    pass
 
 
 class Asset(object):
@@ -68,10 +75,36 @@ class CompressedAsset(Asset):
 
 
 class StylesheetAsset(CompressedAsset):
+    URL_REGEX = re.compile(r'url\([\'"]?([^\'"\)]*)[\'"]?\)', re.I)
+
     def process(self, manifest):
         if self.processed:
             return
-        # TODO:  Process URLs in stylesheet
+
+        def sub_urls(match):
+            url = match.group(1)
+            if url.startswith('http://') or url.startswith('https://'):
+                return 'url("{}")'.format(url)
+            path = os.path.normpath(
+                os.path.join(
+                    os.path.dirname(self.path),
+                    urlparse.unquote(url),
+                )
+            )
+            try:
+                asset = manifest[path]
+                asset.process(manifest)
+                # (We know the asset filename is URL safe, no need to quote
+                return 'url("{}")'.format(asset.filename)
+            except KeyError:
+                raise MissingAsset('Could not find "{}" in "{}"'.format(
+                    url, self.path,
+                ))
+
+        self.content = self.URL_REGEX.sub(
+            sub_urls, self.content.decode('ascii')
+        ).encode('ascii')
+
         super(StylesheetAsset, self).process(manifest)
 
 

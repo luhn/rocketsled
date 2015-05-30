@@ -1,8 +1,7 @@
 @import url('nav.css');
-@import url('noexist.css');
 @import url("http://example.com/absolute.css");
 
 body {
-	background:url("../images/blank.gif");
+	background:url(../images/blank.gif);
 	background-size:cover;
 }

@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 import os
 import os.path
+import json
 
 from .asset import create_asset_from_path
 
@@ -31,4 +32,12 @@ def load_assets(base_path):
 
 def process_assets(manifest):
     for asset in manifest.values():
-        asset.process()
+        asset.process(manifest)
+
+
+def generate_manifest_json(base_path, manifest):
+    l = list()
+    for asset in manifest.values():
+        path = os.path.relpath(asset.path, base_path)
+        l.append((path, asset.filename))
+    return json.dumps(sorted(l))

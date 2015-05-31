@@ -29,7 +29,9 @@ class Asset(object):
 
     def __init__(self, path):
         self.path = path
-        self.headers = dict()
+        self.headers = {
+            'Cache-Control': 'max-age=31556926',
+        }
         mtype, encoding = mimetypes.guess_type(path)
         if mtype is not None:
             self.headers['Content-Type'] = mtype

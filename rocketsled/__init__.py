@@ -40,4 +40,5 @@ def generate_manifest_json(base_path, manifest):
     for asset in manifest.values():
         path = os.path.relpath(asset.path, base_path)
         l.append((path, asset.filename))
-    return json.dumps(sorted(l))
+    return json.dumps(sorted(l), indent=4) + '\n'
+

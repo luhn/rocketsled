@@ -6,11 +6,9 @@ def upload_assets(manifest, bucket_name, prefix=None):
     b = S3Connection().get_bucket(bucket_name)
     for asset in manifest.values():
         fn = asset.filename
-        print('Uploading {} ({})'.format(asset.path, fn))
         if prefix:
             fn = prefix + asset.filename
         if b.get_key(fn) is not None:
-            print('Exists!')
             continue
         k = Key(b)
         k.key = fn

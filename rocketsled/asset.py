@@ -102,7 +102,11 @@ class StylesheetAsset(CompressedAsset):
 
         def sub_urls(match):
             url = match.group(1)
-            if url.startswith('http://') or url.startswith('https://'):
+            if(
+                    url.startswith('http://')
+                    or url.startswith('https://')
+                    or url.startswith('data:')
+            ):
                 return 'url("{}")'.format(url)
             path = os.path.normpath(
                 os.path.join(

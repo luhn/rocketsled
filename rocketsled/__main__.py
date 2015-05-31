@@ -32,9 +32,18 @@ def main():
     )
     args = parser.parse_args()
 
+    def output(text):
+        if not args.stdout:
+            sys.stdout.write(text)
+            sys.stdout.flush()
+
+    output('Collecting files... ')
     manifest = load_assets(args.path)
+    output('{}\n'.format(len(manifest)))
+    output('Processing files... ')
     process_assets(manifest)
-    upload_assets(manifest, args.bucketname, args.prefix)
+    output('Done.\n')
+    upload_assets(manifest, args.bucketname, args.prefix, progress=output)
     output = generate_manifest_json(args.path, manifest)
     if args.stdout:
         sys.stdout.write(output)

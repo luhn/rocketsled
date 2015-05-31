@@ -3,7 +3,7 @@ import os.path
 import json
 import hashlib
 
-from boto.s3.connection import S3Connection
+from boto.s3 import connect_to_region
 from boto.s3.key import Key
 
 
@@ -19,8 +19,9 @@ def _open_cache(bucket_name, prefix, mode):
     return open(path, mode)
 
 
-def upload_assets(manifest, bucket_name, prefix=None, progress=lambda _: None):
-    b = S3Connection().get_bucket(bucket_name)
+def upload_assets(manifest, region, bucket_name, prefix=None,
+                  progress=lambda _: None):
+    b = connect_to_region(region).get_bucket(bucket_name)
 
     progress('Checking cache...')
     with _open_cache(bucket_name, prefix, 'r') as fh:

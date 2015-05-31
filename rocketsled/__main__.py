@@ -13,6 +13,9 @@ def main():
     )
     parser.add_argument('path', help='Path to static files to upload.')
     parser.add_argument(
+        'region', help='The S3 region of the bucket.',
+    )
+    parser.add_argument(
         'bucketname', help='The name of the bucket in S3 to upload to.',
     )
     parser.add_argument(
@@ -43,7 +46,8 @@ def main():
     output('Processing files... ')
     process_assets(manifest)
     output('Done.\n')
-    upload_assets(manifest, args.bucketname, args.prefix, progress=output)
+    upload_assets(manifest, args.region, args.bucketname, args.prefix,
+                  progress=output)
     output = generate_manifest_json(args.path, manifest)
     if args.stdout:
         sys.stdout.write(output)

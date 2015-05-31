@@ -25,6 +25,7 @@ class Asset(object):
     """
     processed = False
     _content = None
+    _encoded = None
 
     def __init__(self, path):
         self.path = path
@@ -40,6 +41,13 @@ class Asset(object):
         """
         self.processed = True
 
+    def encode(self):
+        """
+        Encode the content.  (Compression, mainly.)
+
+        """
+        return self.content
+
     @property
     def content(self):
         if self._content is not None:
@@ -51,6 +59,12 @@ class Asset(object):
     @content.setter
     def content(self, value):
         self._content = value
+
+    @property
+    def encoded(self):
+        if self._encoded is None:
+            self._encoded = self.encode()
+        return self._encoded
 
     @property
     def filename(self):
@@ -68,16 +82,13 @@ class CompressedAsset(Asset):
         'application/xhtml+xml',
     }
 
-    def process(self, manifest):
-        if self.processed:
-            return
-        super(CompressedAsset, self).process(manifest)
-
+    def encode(self):
+        encoded = super(CompressedAsset, self).encode()
         io = BytesIO()
         with GzipFile(fileobj=io, mode='wb') as gz:
-            gz.write(self.content)
-        self.content = io.getvalue()
+            gz.write(encoded)
         self.headers['Content-Encoding'] = 'gzip'
+        return io.getvalue()
 
 
 class StylesheetAsset(CompressedAsset):

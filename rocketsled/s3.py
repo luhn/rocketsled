@@ -14,4 +14,4 @@ def upload_assets(manifest, bucket_name, prefix=None):
             continue
         k = Key(b)
         k.key = fn
-        k.set_contents_from_string(asset.content, headers=asset.headers)
+        k.set_contents_from_string(asset.encoded, headers=asset.headers)

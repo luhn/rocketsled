@@ -47,20 +47,36 @@ def test_process_assset():
     """
     asset = Asset('tests/static/hello.txt')
     asset.process(dict())
-    assert asset.content == b'Hello world!\n'
+    assert asset.content == asset.encoded == b'Hello world!\n'
     assert asset.processed is True
 
 
-def test_process_compressed_asset():
-    """
-
-    """
+def test_compressed_asset():
     asset = CompressedAsset('tests/static/hello.txt')
     asset.process(dict())
-    with GzipFile(fileobj=BytesIO(asset.content)) as gz:
+    assert asset.content == b'Hello world!\n'
+    with GzipFile(fileobj=BytesIO(asset.encoded)) as gz:
         assert gz.read() == b'Hello world!\n'
     assert asset.headers['Content-Encoding'] == 'gzip'
     assert asset.processed is True
+
+
+def test_compressed_asset_consistent_hash():
+    """
+    Make sure that assets with the same content always give the same hash.
+    This initially wasn't working with the compressed assets because  gzip adds
+    a timestamp when compressing the file.
+
+    """
+    import time
+    asset1 = CompressedAsset('tests/static/hello.txt')
+    asset1.process(dict())
+    fn1 = asset1.filename
+
+    time.sleep(1)
+    asset2 = CompressedAsset('tests/static/hello.txt')
+    asset2.process(dict())
+    assert fn1 == asset2.filename
 
 
 def test_asset_filename():
@@ -93,8 +109,9 @@ def test_asset_stylesheet():
         '\tbackground-size:cover;\n'
         '}}\n'
     ).format(navcss.filename, blankgif.filename).encode('ascii')
+    assert maincss.content == expected
 
-    with GzipFile(fileobj=BytesIO(maincss.content)) as gz:
+    with GzipFile(fileobj=BytesIO(maincss.encoded)) as gz:
         assert gz.read() == expected
 
 

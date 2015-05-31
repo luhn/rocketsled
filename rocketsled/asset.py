@@ -139,7 +139,9 @@ def create_asset_from_path(path):
 
     """
     mtype, _ = mimetypes.guess_type(path)
-    if mtype == 'text/css':
+    if mtype is None:
+        return Asset(path)
+    elif mtype == 'text/css':
         return StylesheetAsset(path)
     elif mtype.startswith('text/') or mtype in CompressedAsset.COMPRESSABLE:
         return CompressedAsset(path)

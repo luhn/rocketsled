@@ -9,9 +9,10 @@ from base64 import urlsafe_b64encode as b64encode
 
 # Python 2/3 imports
 if sys.version_info[0] < 3:
-    import urllib as urlparse
+    from urllib import unquote
+    from urlparse import urlsplit
 else:
-    import urllib.parse as urlparse
+    from urllib.parse import unquote, urlsplit
 
 
 class MissingAsset(Exception):
@@ -111,7 +112,9 @@ class StylesheetAsset(CompressedAsset):
             path = os.path.normpath(
                 os.path.join(
                     os.path.dirname(self.path),
-                    urlparse.unquote(url),
+                    unquote(
+                        urlsplit(url).path
+                    ),
                 )
             )
             try:

@@ -126,3 +126,24 @@ def test_asset_stylesheet_noexist():
             asset.process(dict())
     finally:
         os.remove(fn)
+
+
+def test_asset_stylesheet_url_params():
+    """
+    Sometimes URLs will include things like ``?#iefix`` which we don't care
+    about.
+
+    """
+    asset = StylesheetAsset('test.css')
+    other = StylesheetAsset('other.css')
+    other._content = b'foo'
+    asset._content = (
+        b'@import url("other.css?version");\n'
+        b'@import url("other.css#iefix");\n'
+        b'@import url("other.css?#iefix");\n'
+    )
+    # Should not throw MissingAsset error.
+    asset.process({
+        'test.css': asset,
+        'other.css': other,
+    })

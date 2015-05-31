@@ -1,7 +1,9 @@
 import argparse
 import sys
 
-from rocketsled import load_assets, process_assets, generate_manifest_json
+from rocketsled import (
+    load_assets, process_assets, generate_manifest_json, __version__,
+)
 from rocketsled.s3 import upload_assets
 
 
@@ -23,6 +25,10 @@ def main():
     parser.add_argument(
         '--stdout', action='store_true',
         help='Output the manifest to stdout.',
+    )
+    parser.add_argument(
+        '--version', action='version',
+        version='%(prog)s {}'.format(__version__),
     )
     args = parser.parse_args()
 

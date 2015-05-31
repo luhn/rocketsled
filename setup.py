@@ -1,8 +1,11 @@
 from setuptools import setup, find_packages
 
+from rocketsled import __version__
+
+
 setup(
     name='rocketsled',
-    version='0.1.0',
+    version=__version__,
     packages=find_packages(),
     install_requires=[
         'boto==2.38.0',

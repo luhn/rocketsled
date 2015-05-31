@@ -100,7 +100,7 @@ def test_asset_stylesheet():
 
 def test_asset_stylesheet_noexist():
     with NamedTemporaryFile(delete=False) as tmp:
-        tmp.write('@import url(noexist.css);\n')
+        tmp.write(b'@import url(noexist.css);\n')
         fn = tmp.name
 
     try:

@@ -1,11 +1,17 @@
+import sys
 import re
 import os.path
-import urllib as urlparse
 from io import BytesIO
 from gzip import GzipFile
 import mimetypes
 import hashlib
 from base64 import urlsafe_b64encode as b64encode
+
+# Python 2/3 imports
+if sys.version_info[0] < 3:
+    import urllib as urlparse
+else:
+    import urllib.parse as urlparse
 
 
 class MissingAsset(Exception):

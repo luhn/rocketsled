@@ -32,6 +32,7 @@ class Asset(object):
         self.path = path
         self.headers = {
             'Cache-Control': 'max-age=31556926',
+            'Access-Control-Allow-Origin': '*',
         }
         mtype, encoding = mimetypes.guess_type(path)
         if mtype is not None:

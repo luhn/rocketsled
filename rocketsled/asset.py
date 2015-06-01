@@ -71,8 +71,12 @@ class Asset(object):
 
     @property
     def filename(self):
-        hash = hashlib.sha1(self.content).digest()
-        return b64encode(hash).decode('ascii').rstrip('=')
+        hash = hashlib.sha1()
+        for key, value in sorted(self.headers.items()):
+            hash.update(key.encode('utf8'))
+            hash.update(value.encode('utf8'))
+        hash.update(self.content)
+        return b64encode(hash.digest()).decode('ascii').rstrip('=')
 
 
 class CompressedAsset(Asset):
@@ -85,12 +89,15 @@ class CompressedAsset(Asset):
         'application/xhtml+xml',
     }
 
+    def process(self, manifest):
+        self.headers['Content-Encoding'] = 'gzip'
+        super(CompressedAsset, self).process(manifest)
+
     def encode(self):
         encoded = super(CompressedAsset, self).encode()
         io = BytesIO()
         with GzipFile(fileobj=io, mode='wb') as gz:
             gz.write(encoded)
-        self.headers['Content-Encoding'] = 'gzip'
         return io.getvalue()
 
 

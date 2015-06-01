@@ -34,11 +34,13 @@ def test_load_assets():
 def test_generate_manifest_json():
     import json
     manifest = load_assets('tests/static/')
-    output = generate_manifest_json('tests/static/', manifest)
-    assert json.loads(output) == [
-        ['css/main.css', u'2r15TxTEa1VqV0Ycsh8OlG5hBpc'],
-        ['css/nav.css', u'37qyl7CEX5uGRXrB8M6txzUv8Yo'],
-        ['hello.txt', u'R6AT5mDUCGGdiUsggGsdUIaqsDs'],
-        ['images/blank.gif', u'1fzrZTJkPQ2E_-CcQMSB7N9Z4Vo'],
-        ['images/subdir/blank.png', u'oBRw69w7ipXVXVj_h7fLacS834E'],
+    output = json.loads(generate_manifest_json('tests/static/', manifest))
+    hello = Asset('tests/static/hello.txt')
+    assert output[2][1] == hello.filename
+    assert [row[0] for row in output] == [
+        'css/main.css',
+        'css/nav.css',
+        'hello.txt',
+        'images/blank.gif',
+        'images/subdir/blank.png',
     ]

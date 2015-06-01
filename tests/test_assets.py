@@ -80,8 +80,23 @@ def test_compressed_asset_consistent_hash():
 
 
 def test_asset_filename():
-    asset = Asset('tests/static/hello.txt')
-    assert asset.filename == 'R6AT5mDUCGGdiUsggGsdUIaqsDs'
+    asset1 = Asset('tests/static/hello.txt')
+    asset2 = Asset('tests/static/hello.txt')
+
+    # Same filename for same content
+    asset1._content = b'Hello'
+    asset2._content = b'Hello'
+    assert asset1.filename == asset2.filename
+
+    # Small change results in different filename
+    asset2._content = b'hello'
+    assert asset1.filename != asset2.filename
+
+    # Change in headers results in different filename
+    asset1._content = b'Hello'
+    asset2._content = b'Hello'
+    asset1.headers['X-Testing'] = 'Yes'
+    assert asset1.filename != asset2.filename
 
 
 def test_asset_stylesheet():

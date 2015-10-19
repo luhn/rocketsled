@@ -31,6 +31,18 @@ def test_load_assets():
         assert value.path == key
 
 
+def test_load_assets_multiple():
+    assets = load_assets('tests/static/css/', 'tests/static/images/')
+    assert set(assets.keys()) == {
+        os.path.abspath(os.path.join('tests/static', path)) for path in [
+            'css/main.css',
+            'css/nav.css',
+            'images/blank.gif',
+            'images/subdir/blank.png',
+        ]
+    }
+
+
 def test_generate_manifest_json():
     import json
     manifest = load_assets('tests/static/')

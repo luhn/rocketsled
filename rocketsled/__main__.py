@@ -11,7 +11,6 @@ def main():
     parser = argparse.ArgumentParser(
         description='Upload static assets immutably to the cloud.'
     )
-    parser.add_argument('path', help='Path to static files to upload.')
     parser.add_argument(
         'region', help='The S3 region of the bucket.',
     )
@@ -33,6 +32,10 @@ def main():
         '--version', action='version',
         version='%(prog)s {}'.format(__version__),
     )
+    parser.add_argument(
+        'path', nargs='+',
+        help='Path to static files to upload.',
+    )
     args = parser.parse_args()
 
     def output(text):
@@ -41,7 +44,7 @@ def main():
             sys.stdout.flush()
 
     output('Collecting files... ')
-    manifest = load_assets(args.path)
+    manifest = load_assets(*args.path)
     output('{}\n'.format(len(manifest)))
     output('Processing files... ')
     process_assets(manifest)

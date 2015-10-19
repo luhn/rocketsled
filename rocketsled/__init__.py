@@ -9,12 +9,9 @@ import json
 from .asset import create_asset_from_path
 
 
-def load_assets(base_path):
+def load_assets(*args):
     """
-    Walk the directory and collect all static assets.
-
-    :param base_path:  The path of the directory to walk.
-    :type base_path:  str
+    Walk the given directories and collect all static assets.
 
     :returns:  A dictionary with the filepath as the keys and the corresponding
         :class:`rocksled.asset.Asset` object as the values.
@@ -22,13 +19,14 @@ def load_assets(base_path):
 
     """
     manifest = dict()
-    for dirname, subdirs, files in os.walk(base_path):
-        for fn in files:
-            if fn.startswith('.'):
-                continue
-            path = os.path.join(dirname, fn)
-            path = os.path.abspath(path)
-            manifest[path] = create_asset_from_path(path)
+    for base_path in args:
+        for dirname, subdirs, files in os.walk(base_path):
+            for fn in files:
+                if fn.startswith('.'):
+                    continue
+                path = os.path.join(dirname, fn)
+                path = os.path.abspath(path)
+                manifest[path] = create_asset_from_path(path)
     return manifest
 
 

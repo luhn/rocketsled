@@ -134,9 +134,13 @@ class StylesheetAsset(CompressedAsset):
                     url, self.path,
                 ))
 
-        self.content = self.URL_REGEX.sub(
-            sub_urls, self.content.decode('ascii')
-        ).encode('ascii')
+        try:
+            self.content = self.URL_REGEX.sub(
+                sub_urls, self.content.decode('utf-8')
+            ).encode('utf-8')
+        except:
+            print(self.path)
+            raise
 
         super(StylesheetAsset, self).process(manifest)
 
